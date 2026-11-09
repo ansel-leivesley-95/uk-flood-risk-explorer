@@ -6,7 +6,7 @@ from src.geocode import location_to_coords
 
 
 def get_local_flood_zones(location_name: str, radius_km: int = 50):
-    safe_name = (location_name.lower().replace(" ", "_"))
+    safe_name = (location_name.strip().lower().replace(" ", "_"))
 
     output_dir = "data/processed/flood_zones"
     os.makedirs(output_dir, exist_ok=True)
