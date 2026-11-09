@@ -1,11 +1,20 @@
 from geopy.geocoders import Nominatim
 
-def postcode_to_coords(postcode: str) -> tuple:
-    geolocator = Nominatim(user_agent="uk_flood_risk_explorer")
+def location_to_coords(location: str) -> tuple[float, float]:
+    geolocator = Nominatim(
+        user_agent="uk_flood_risk_explorer"
+    )
 
-    location = geolocator.geocode(f"{postcode}, United Kingdom")
+    result = geolocator.geocode(
+        f"{location}, United Kingdom"
+    )
 
-    if location is None:
-        raise ValueError(f"Could not find coordinates for postcode: {postcode}")
+    if result is None:
+        raise ValueError(
+            f"Could not locate '{location}'"
+        )
 
-    return (location.latitude, location.longitude)
+    return (
+        result.latitude,
+        result.longitude
+    )
