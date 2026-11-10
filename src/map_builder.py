@@ -32,7 +32,10 @@ def create_map(
 
     folium.Marker(
         [lat, lon],
-        popup=location,
+        popup=f"""
+        <b>{location}</b><br>
+        Risk: {risk['risk']}
+        """,
         tooltip=location,
         icon=folium.Icon(
             color=colour

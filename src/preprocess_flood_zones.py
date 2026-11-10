@@ -5,14 +5,21 @@ from shapely.geometry import Point
 from src.geocode import location_to_coords
 
 
-def get_local_flood_zones(location_name: str, radius_km: int = 50):
-    safe_name = (location_name.strip().lower().replace(" ", "_"))
-
-    output_dir = "data/processed/flood_zones"
-    os.makedirs(output_dir, exist_ok=True)
-    output_file = (
-        f"{output_dir}/{safe_name}.geojson"
+def get_local_flood_zones(location_name: str, radius_km: int = 30):
+    lat, lon = location_to_coords(location_name)
+    output_dir = (
+        "data/processed/flood_zones"
     )
+    os.makedirs(
+        output_dir,
+        exist_ok=True
+    )
+    cache_name = (
+        f"{lat:.2f}_{lon:.2f}_{radius_km}km"
+        .replace(".", "_")
+        .replace("-", "m")
+    )
+    output_file = (f"{output_dir}/{cache_name}.gpkg")
 
     if os.path.exists(output_file):
         print(f"Loading cached dataset: {location_name}")
@@ -21,7 +28,7 @@ def get_local_flood_zones(location_name: str, radius_km: int = 50):
     print(f"Creating dataset: {location_name}")
 
     lat, lon = location_to_coords(location_name)
-    flood = gpd.read_file("data/raw/flood_zones/flood_zones.geojson")
+    flood = gpd.read_file("data/raw/flood_zones/flood_zones.gpkg")
 
     centre = gpd.GeoDataFrame(
         geometry=[Point(lon, lat)],
@@ -44,7 +51,7 @@ def get_local_flood_zones(location_name: str, radius_km: int = 50):
 
     flood_local.to_file(
         output_file,
-        driver="GeoJSON"
+        driver="GPKG"
     )
 
     return flood_local
