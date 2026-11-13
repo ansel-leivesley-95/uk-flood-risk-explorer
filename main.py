@@ -3,6 +3,7 @@ from src.preprocess_flood_zones import get_local_flood_zones
 from src.map_builder import create_map
 from src.flood_analyser import assess_flood_risk
 from src.flood_distance import nearest_flood_zone_distance
+from src.report_generator import generate_report
 
 
 def main():
@@ -16,6 +17,16 @@ def main():
     risk = assess_flood_risk(lat=lat, lon=lon, flood_zones=flood_zones)
 
     distance = nearest_flood_zone_distance(lat=lat, lon=lon, flood_zones=flood_zones)
+
+    report_file = generate_report(
+        location=location,
+        lat=lat,
+        lon=lon,
+        risk=risk,
+        distance=distance
+    )
+
+    print(f"PDF report saved to: {report_file}")
 
     print("\nFlood Risk Assessment:")
     print("-" * 20)
