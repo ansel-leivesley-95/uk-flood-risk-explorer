@@ -107,30 +107,25 @@ def create_map(
         {flood_source}<br><br>
 
         <b>Distance to Flood Zone</b><br>
-        {distance:.1f} m
+        {"unknown" if distance is None else f"{distance:.1f}m"}
     </div>
     """
 
     # Add a marker to the map at the specified latitude and longitude, with a popup displaying the risk assessment details,
     # a tooltip showing the location and risk level, and a colored icon based on the assessed risk level
-    folium.Marker(
-        [lat, lon],
-
+    folium.CircleMarker(
+        location=[lat, lon],
+        radius=10,
+        color="black",
+        weight=2,
+        fill=True,
+        fill_color=marker_colour,
+        fill_opacity=0.9,
         popup=folium.Popup(
             popup_html,
             max_width=300
         ),
-
-        tooltip=(
-            f"{location} "
-            f"({risk_level})"
-        ),
-
-        icon=folium.Icon(
-            color=marker_colour,
-            icon="info-sign"
-        )
-
+        tooltip=f"{location} ({risk_level})"
     ).add_to(m)
 
     def style_function(feature):
@@ -175,7 +170,9 @@ def create_map(
                     "Flood Zone",
                     "Flood Source"
                 ],
-                sticky=True
+                localize=True,
+                sticky=False,
+                labels=True
             )
 
         ).add_to(m)
@@ -237,40 +234,6 @@ def create_map(
         "outputs/map.html"
     )
 
-    legend_html = """
-    <div style="
-    position: fixed;
-    bottom: 50px;
-    left: 50px;
-    width: 180px;
-    background-color: white;
-    border: 2px solid grey;
-    z-index:9999;
-    padding: 10px;
-    font-size:14px;
-    ">
-    <b>Flood Risk Legend</b><br>
-    <span style="background:red;
-    width:12px;
-    height:12px;
-    display:inline-block;"></span>
-    FZ3 High Risk<br>
-    <span style="background:orange;
-    width:12px;
-    height:12px;
-    display:inline-block;"></span>
-    FZ2 Medium Risk<br>
-    <span style="background:green;
-    width:12px;
-    height:12px;
-    display:inline-block;"></span>
-    Assessment Location
-    </div>
-    """
-    # Add the legend HTML to the map as a child element, ensuring it is displayed on the map interface
-    m.get_root().html.add_child(
-        folium.Element(legend_html)
-    )
     # Save the generated map to an HTML file in the "outputs" directory
     m.save(output_file)
     # Open the saved HTML map in the default web browser for immediate viewing
