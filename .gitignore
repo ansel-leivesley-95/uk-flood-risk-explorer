@@ -36,3 +36,5 @@ outputs/*
 # OS Files
 .DS_Store
 Thumbs.db
+
+notes.txt

@@ -19,8 +19,8 @@ def main():
     print(f"\nLatitude : {lat}")
     print(f"Longitude: {lon}")
 
-    # Retrieve local flood zones within a 30 km radius of the specified location
-    flood_zones = get_local_flood_zones(location_name=location, radius_km=30)
+    # Retrieve local flood zones within a 50 km radius of the specified location
+    flood_zones = get_local_flood_zones(location_name=location, radius_km=50)
     # Assess the flood risk for the specified location based on the retrieved flood zones
     risk = assess_flood_risk(lat=lat, lon=lon, flood_zones=flood_zones)
 
@@ -55,8 +55,9 @@ def main():
         lat=lat,
         lon=lon,
         location=location,
-        flood_zones=flood_zones,
-        risk = risk
+        risk = risk,
+        distance = distance,
+        flood_zones=flood_zones
     )
 
     print(f"\nMap saved to: {output_file}")
