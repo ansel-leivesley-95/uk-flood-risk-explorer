@@ -1,81 +1,164 @@
 # UK Flood Risk Explorer
 
-An open-source Python GIS application for assessing flood risk across the United Kingdom using publicly available flood zone datasets and geospatial analysis.
+A Python-based GIS pipeline for assessing flood risk across the United Kingdom using geospatial analysis, flood zone datasets and automated reporting.
 
-The tool allows users to enter a location, automatically geocode it, retrieve local flood zone information, assess flood risk, and generate an interactive web map displaying the results.
+The application enables users to enter a UK location or postcode, assess local flood risk, visualise flood extents on an interactive map and generate professional PDF flood risk assessment reports.
 
 ---
 
-## Features
+## Overview
+
+UK Flood Risk Explorer combines geocoding, spatial analysis, automated data processing and interactive mapping to provide rapid flood-risk screening for a specified location.
+
+The pipeline:
+
+1. Converts a location or postcode into geographic coordinates.
+2. Retrieves a local subset of national flood zone data.
+3. Performs point-in-polygon flood risk analysis.
+4. Calculates the distance to the nearest flood zone.
+5. Generates an interactive web map.
+6. Produces a professional PDF flood risk assessment report.
+
+---
+
+## Key Features
 
 ### Location Geocoding
 
-Convert UK place names and postcodes into geographic coordinates using OpenStreetMap Nominatim services.
+Convert UK place names and postcodes into latitude and longitude coordinates using OpenStreetMap Nominatim.
 
-Examples:
+Example inputs:
 
 - Newcastle Upon Tyne
 - Edinburgh
 - Bristol
-- NE1 4LP
+- UK Postcode
 
 ---
 
 ### Flood Dataset Processing
 
-The application uses official flood zone data and automatically:
+The application automatically:
 
-- Loads the national flood dataset
-- Clips the dataset around a user-defined location
-- Creates localised datasets for faster processing
-- Caches processed data for future use
+- Loads flood zone data
+- Creates local subsets of national datasets
+- Caches processed datasets for future use
+- Reuses cached datasets on subsequent runs
 
-This significantly improves performance when analysing multiple locations.
+This significantly improves performance when analysing the same locations repeatedly.
 
 ---
 
-### Flood Risk Assessment
+### Flood Zone Classification
 
-Performs geospatial point-in-polygon analysis to determine whether a location lies within:
+Perform spatial analysis to determine whether an assessment location falls within:
 
-- Flood Zone 2 (Medium Risk)
-- Flood Zone 3 (High Risk)
+- Flood Zone 2 (Medium Probability)
+- Flood Zone 3 (High Probability)
 
-Risk classifications are automatically returned to the user.
+Risk levels are automatically assigned.
+
+---
+
+### Distance Analysis
+
+For locations outside mapped flood zones, the application calculates:
+
+- Distance to the nearest flood zone
+- Flood source information
+- Risk classification
 
 ---
 
 ### Interactive Mapping
 
-Generate interactive web maps showing:
+Generate interactive web maps containing:
 
-- User location
-- Flood zone polygons
-- Risk classification
-- Flood sources
+- Assessment location
+- Flood Zone 2 polygons
+- Flood Zone 3 polygons
+- Dynamic scale bar
+- Interactive legend
+- Polygon inspection tools
+- Risk-based styling
 
-Maps are exported as HTML and automatically opened in the default web browser.
+Maps are automatically opened in the default web browser.
 
 ---
 
-## Project Workflow
+### Automated Reporting
+
+Generate professional PDF reports containing:
+
+- Assessment metadata
+- Geographic coordinates
+- Flood risk classification
+- Flood zone information
+- Distance analysis
+- Executive summary
+- Methodology
+- Data sources
+- Disclaimer
+
+Reports are automatically exported to the outputs directory.
+
+---
+
+## Workflow
 
 ```text
-User Location
-      ↓
-Geocoding
-      ↓
+Location / Postcode
+          │
+          ▼
+      Geocoding
+          │
+          ▼
 Coordinate Extraction
-      ↓
-Load Cached Dataset
-      ↓
-(Generate Local Dataset if Needed)
-      ↓
-Flood Zone Analysis
-      ↓
-Risk Classification
-      ↓
-Interactive Map
+          │
+          ▼
+Cached Dataset Lookup
+          │
+          ▼
+Spatial Analysis
+          │
+          ▼
+Flood Risk Assessment
+          │
+          ▼
+Distance Analysis
+          │
+    ┌─────┴─────┐
+    ▼           ▼
+Interactive    PDF
+    Map       Report
+```
+
+---
+
+## Example Output
+
+```text
+Enter a UK location:
+
+Example UK Postcode
+
+Latitude : 54.xxxxx
+Longitude: -1.xxxxx
+
+Loading cached dataset
+
+Flood Risk Assessment
+---------------------
+
+In Flood Zone: False
+Risk Level: Low
+Flood Zone: None
+Flood Source: None
+Distance to Nearest Flood Zone: 300 m
+
+Map saved to outputs/map.html
+
+PDF report saved successfully
 ```
 
 ---
@@ -84,23 +167,23 @@ Interactive Map
 
 ```text
 UK-Flood-Risk-Explorer/
-│
+
 ├── data/
 │   ├── raw/
-│   │   └── flood_zones/
-│   │
 │   └── processed/
-│       └── flood_zones/
 │
 ├── outputs/
+│   ├── map.html
+│   └── flood_report.pdf
 │
 ├── src/
 │   ├── flood_analyser.py
-│   ├── flood_loader.py
+│   ├── flood_distance.py
 │   ├── geocode.py
 │   ├── map_builder.py
 │   ├── preprocess_flood_zones.py
-│   └── __init__.py
+│   ├── report_generator.py
+│   └── convert_to_gpkg.py
 │
 ├── main.py
 ├── requirements.txt
@@ -112,7 +195,7 @@ UK-Flood-Risk-Explorer/
 
 ## Technologies Used
 
-### GIS
+### GIS and Spatial Analysis
 
 - GeoPandas
 - Shapely
@@ -121,6 +204,7 @@ UK-Flood-Risk-Explorer/
 ### Mapping
 
 - Folium
+- CARTO Basemaps
 
 ### Data Processing
 
@@ -131,128 +215,42 @@ UK-Flood-Risk-Explorer/
 - Geopy
 - OpenStreetMap Nominatim
 
-### Environment
+### Reporting
 
-- Python
-- Virtual Environments
-
----
-
-## Installation
-
-Clone the repository:
-
-```bash
-git clone https://github.com/YOUR_USERNAME/uk-flood-risk-explorer.git
-cd uk-flood-risk-explorer
-```
-
-Create a virtual environment:
-
-```bash
-python -m venv .venv
-```
-
-Activate:
-
-### Windows
-
-```bash
-.venv\Scripts\activate
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-## Usage
-
-Run the application:
-
-```bash
-python main.py
-```
-
-Enter a UK location:
-
-```text
-Enter a UK location:
-Newcastle Upon Tyne
-```
-
-Example output:
-
-```text
-Latitude : 54.9738
-Longitude: -1.6131
-
-Flood Risk Assessment
---------------------
-
-In Flood Zone : False
-Risk Level    : Low
-Flood Zone    : None
-```
-
-An interactive map will automatically be generated and opened in your web browser.
-
----
-
-## Data Sources
-
-This project uses publicly available open datasets including:
-
-- UK Flood Zone Data
-- OpenStreetMap
-- Nominatim Geocoding Service
-
-All data remains the property of their respective providers.
+- ReportLab
 
 ---
 
 ## Current Capabilities
 
-- [x] Location geocoding
-- [x] Interactive web mapping
-- [x] Flood zone dataset loading
-- [x] Local dataset caching
-- [x] Flood risk assessment
-- [x] Flood Zone 2 and 3 visualisation
+- Location geocoding
+- Postcode geocoding
+- Flood dataset preprocessing
+- Local dataset caching
+- Flood zone intersection analysis
+- Distance-to-flood-zone analysis
+- Interactive web mapping
+- Automated PDF reporting
 
 ---
 
-## Future Development
+## Planned Next Steps of Repo
 
-Planned enhancements:
-
-- Distance to nearest flood zone
-- Automated flood assessment reports
-- Streamlit web application
-- Downloadable PDF reports
-- Additional environmental hazard layers
-- Surface water flood risk assessment
-- River network analysis
-- Web deployment
-
+- Embedded map figures within PDF reports
+- Enhanced flood risk scoring
+- River proximity assessment
+- Surface water flood-risk analysis
+- Multi-hazard environmental screening
 ---
 
-## Example Application
+## Disclaimer
 
-This project demonstrates practical skills in:
+This application provides an indicative flood-risk assessment using publicly available datasets.
 
-- Geographic Information Systems (GIS)
-- Geospatial data engineering
-- Environmental risk assessment
-- Python software development
-- Spatial analysis
-- Open-source geospatial workflows
+Results should not be considered a substitute for a detailed professional flood-risk assessment undertaken by qualified specialists.
 
 ---
 
 ## Licence
 
-This project is released under the MIT Licence.
+MIT Licence.
